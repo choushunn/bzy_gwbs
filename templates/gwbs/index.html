@@ -1,0 +1,327 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}答题页面{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+{% include "common/title.html" %}
+<div class="row">
+    <div class="col-12 text-right">
+        <h3>
+            <span id="hour_show"></span>
+            <span id="minute_show">0 分</span>
+            <span id="second_show">0 秒</span>
+        </h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-3">
+        <div class="card-header">
+            <strong>考生信息</strong>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-8 offset-2">
+                        {{ STATIC_URL }}
+                        <img src="{% static '15986836378978.jpg' %}"
+                        class="img-thumbnail" alt="...">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-10 offset-1">
+                        <p>准考证号：<strong>{{ user_answer.user.candidate_num }}</strong></p>
+                        <p>考生姓名：<strong>{{ user_answer.user.name }}</strong></p>
+                        <p>考生考室：<strong>{{ user_answer.user.room }} </strong></p>
+                        {# <p>登录IP：<strong>{{ user.useranswer.login_ip }}</strong></p>#}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="row">
+            <div class="col-12">
+                <div class="card-header">
+                    <strong>第 1 题 【 公文写作题 】</strong>
+                </div>
+                <div class="card">
+                    <div class="card-body pre-scrollable">
+                        <div style="border-bottom:1px dashed #000000;" class="mb-4"></div>
+                        {% autoescape off %}
+                        {{ exam_info }}
+                        {% endautoescape %}
+                        <div style="border-bottom:1px dashed #000000;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <br>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <h5>【 1 】上传 WORD 文件</h5>
+                        <div class="row">
+                            <div class="col-8">
+                                <input type="file" id="file1" accept=".doc,.docx">
+                            </div>
+                            <div class="col-4">
+<!--                                <button class="btn btn-outline-success" id="upload_file1">-->
+<!--                                    上传-->
+<!--                                </button>-->
+                                {% if word_file_status %}
+                                <span class="text-danger">上传成功！</span>
+                                {% endif %}
+                            </div>
+
+                            <br>
+                            <br>
+                        </div>
+                            </div>
+                            <div class="col-6">
+                        <h5>【 2 】上传 PDF 文件</h5>
+                        <div class="row">
+                            <div class="col-8">
+                                <input type="file" id="file2" accept=".pdf">
+                            </div>
+                            <div class="col-4 align-self-center">
+<!--                                <button class="btn btn-outline-success" id="upload_file2">-->
+<!--                                    上传-->
+<!--                                </button>-->
+                                {% if pdf_file_status %}
+                                <span class="text-danger">上传成功！</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                            </div>
+                        </div>
+<!--                        <hr>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4 offset-8 text-right">
+                <br>
+                <button type="button" class="btn btn-danger btn-block" id="gw_but1">【 点我交卷 】</button>
+                <br>
+                <br>
+            </div>
+
+        </div>
+        <br>
+        <br>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'common/plugins/bootstrap/bootstrap-filestyle.min.js' %}"></script>
+<script src="{% static 'common/plugins/timers/jquery.timers.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        // 倒计时
+        var intDiff = parseInt({{request.session.remain_time}});//倒计时总秒数量
+        console.log(intDiff)
+        $('body').everyTime('3s', function () {
+            console.log("show message every 3s.")
+        });
+        timer(intDiff);
+        submit_answer();
+        file_upload_button();
+    })
+
+    function submit_answer() {
+        // 交卷按钮
+        $("#gw_but1").click(function () {
+            layer.confirm('是否交卷？', {
+                shadeClose: true,
+                btn: ['确认', '取消'] //按钮
+            }, function () {
+                $.ajax(
+                    {
+                        url: "/gwbs",
+                        type: "POST",
+                        data: {name: "name",},
+                        cache: false,
+                        async: true,
+                        dataType: 'json',
+                        beforeSend: function (xhr, settings) {
+                            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                        },
+                        success: function (data) {
+                            console.log(data)
+                            if (data.code != null) {
+                                layer.msg(data.message);
+                            }
+                            setTimeout("javascript:location.reload();", 500);
+                        },
+                        error: function (data) {
+                            console.log(data)
+                            layer.msg("交卷失败，请重试！");
+                        }
+                    }
+                )
+            });
+
+        });
+    }
+
+    function file_upload_button() {
+        // 文件上传框样式
+        var file1 = $("#file1").filestyle({
+            text: "选择文件",
+            placeholder: "{{ word_file_status }}",
+            'onChange': function (files) {
+                console.log(files[0].name)
+                var filename = files[0].name
+                var filetype = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+                console.log(filetype)
+                if ((filetype !== "doc") && (filetype !== "docx")) {
+                    layer.alert("请选择 WORD 文件")
+                    $("#file1").filestyle('clear');
+                    return 0;
+                }
+                upload_file("file1");
+            }
+        });
+
+        var file2 = $("#file2").filestyle({
+            text: "选择文件",
+            placeholder: "{{ pdf_file_status }}",
+            'onChange': function (files) {
+                console.log(files[0].name)
+                var filename = files[0].name
+                var filetype = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+                console.log(filetype)
+                if (filetype !== "pdf") {
+                    layer.alert("请选择 PDF 文件")
+                    $("#file2").filestyle('clear');
+                    return 0;
+                }
+                upload_file("file2");
+            }
+        });
+
+        // // 文件上传
+        // $("#input_word").blur(function () {
+        //     upload_file("file1");
+        // })
+        // $("#input_pdf").blur(function () {
+        //     upload_file("file2");
+        // })
+    }
+
+
+    // 倒计时函数
+    function timer(intDiff) {
+        window.setInterval(function () {
+            var day = 0,
+                hour = 0,
+                minute = 0,
+                second = 0;//时间默认值
+            if (intDiff > 0) {
+                day = Math.floor(intDiff / (60 * 60 * 24));
+                hour = Math.floor(intDiff / (60 * 60)) - (day * 24);
+                minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
+                second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+            }
+            if (minute <= 9) minute = '0' + minute;
+            if (second <= 9) second = '0' + second;
+            $('#day_show').html(day + "天");
+            if (hour === 0) {
+                $('#hour_show').html('<s id="h"></s>');
+            } else {
+                $('#hour_show').html('<s id="h"></s>' + hour + ' 时');
+            }
+
+            $('#minute_show').html('<s></s>' + minute + ' 分');
+            $('#second_show').html('<s></s>' + second + ' 秒');
+            intDiff--;
+            if (intDiff === 0) {
+                layer.msg('时间到，正在结束...', {icon: 1, time: 3000});
+                setTimeout("javascript:location.reload();", 1000);
+                setTimeout("javascript:window.location.href='/over';", 1000);
+            }
+            if (intDiff === 900) {
+                //墨绿深蓝风
+                layer.alert('提示', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4, //动画类型
+                    icon: 7,
+                    content: '距离考试结束还有 15 分钟！',
+                    time: 10 * 1000
+                });
+            }
+            if (intDiff === 60) {
+                //墨绿深蓝风
+                layer.alert('提示', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4, //动画类型
+                    icon: 7,
+                    content: '距离考试结束还有 1 分钟，请注意保存！',
+                    time: 10 * 1000
+                });
+            }
+            if (intDiff === 300) {
+                //墨绿深蓝风
+                layer.alert('提示', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4, //动画类型
+                    icon: 7,
+                    content: '距离考试结束还有 5 分钟，请注意保存！',
+                    time: 10 * 1000
+                });
+            }
+        }, 1000);
+    }
+
+    // 文件上传函数
+    function upload_file(file_id) {
+        var formData = new FormData();
+        formData.append("file1", document.getElementById(file_id).files[0]);
+        console.log(formData);
+        $.ajax({
+            url: "/uploader",
+            type: "POST",
+            data: formData,
+            /**
+             *必须false才会自动加上正确的Content-Type
+             */
+            contentType: false,
+            /**
+             * 必须false才会避开jQuery对 formdata 的默认处理
+             * XMLHttpRequest会对 formdata 进行正确的处理
+             */
+            processData: false,
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function (data) {
+                console.log(data)
+                if (data.code != null) {
+                    layer.msg(data.message);
+                    setTimeout("javascript:location.reload();", 500);
+                }
+            },
+            error: function (data) {
+                console.log(data)
+                layer.msg("上传失败！");
+            }
+        });
+    }
+</script>
+
+{% endblock %}

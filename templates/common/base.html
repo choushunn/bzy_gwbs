@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+{% load guardian_tags %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="keywords" content=",">
+    <meta name="description" content=",">
+    <title>
+        {% block title %}首页{% endblock %} - 巴中市第三届机关公文写作大赛
+
+    </title>
+    <!-- Font Awesome Icons -->
+    <link href="{% static 'common/plugins/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'common/plugins/fontawesome-free/css/font-awesome.min.css' %}" rel="stylesheet">
+    <!-- Theme style -->
+    {#    <link href="{% static 'common/plugins/adminlte/css/adminlte.min.css' %}" rel="stylesheet">#}
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="{% static 'common/plugins/bootstrap/bootstrap.min.css' %}">
+    <!-- 动画样式 -->
+    <link href="{% static 'common/plugins/animate/animate.min.css' %}" rel="stylesheet">
+    <!-- 图片浏览 -->
+    <link href="{% static 'common/plugins/fancybox/jquery.fancybox.min.css' %}" rel="stylesheet"/>
+    <!-- 时间线 -->
+    <link href="{% static 'front/css/timeline.css' %}" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <link href="{% static 'common/css/cc.css' %}" rel="stylesheet">
+    <link href="{% static 'front/css/cc-front.css' %}" rel="stylesheet">
+    <!--[if lt IE 9]>
+{#    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>#}
+{#    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>#}
+    <![endif]-->
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+{% include 'common/nav.html' %}
+<!-- 页面主体 -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            {% block body %}
+
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<!-- /页面主体 -->
+{% include 'common/footer.html' %}
+
+<!-- jQuery -->
+<script src="{% static 'common/plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'common/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+{#<script src="{% static 'common/plugins/adminlte/js/adminlte.min.js' %}"></script>#}
+<!-- 图片浏览 -->
+<script src="{% static 'common/plugins/fancybox/jquery.fancybox.min.js' %}"></script>
+<!-- 返回顶部 -->
+<script src="{% static 'common/plugins/goup/jquery.goup.min.js' %}"></script>
+<script src="{% static 'common/plugins/goup/wow.min.js' %}"></script>
+<!-- 弹出层 -->
+<script src="{% static 'common/plugins/layer/layer.js' %}"></script>
+<!-- 导航条效果 -->
+<script src="{% static 'common/plugins/headroom/headroom.min.js' %}"></script>
+<script src="{% static 'common/plugins/headroom/jQuery.headroom.js' %}"></script>
+<!-- 自定义脚本 -->
+<script src="{% static 'common/js/cc.js' %}"></script>
+<script src="{% static 'front/js/cc-front.js' %}"></script>
+{% block js %}
+{% endblock %}
+</body>
+
+</html>

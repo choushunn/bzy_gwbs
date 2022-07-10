@@ -1,0 +1,88 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}考生须知{% endblock %}
+
+{% block body %}
+    {% include "common/title.html" %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <strong>考生须知</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            {% autoescape off %}
+                                {{ page_info.user_info_content }}
+                            {% endautoescape %}
+                        </div>
+                    </div>
+                    <div class="row  py-4">
+                        <div class="col-12">
+                            <form class="" method="post">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-6 offset-3 text-center">
+                                        <div class="form-group form-check">
+                                            <input type="checkbox" class="form-check-input" id="check1" name="check1">
+                                            <label class="form-check-label"
+                                                   for="check1"><strong>我已阅读</strong></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row py-4">
+                                    <div class="col-4 offset-4 text-center">
+                                        <input type="submit" class="btn btn-danger btn-block" disabled value="【 比赛开始 】"
+                                               id="gw_but1">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="py-4">
+                        <br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        var count_down = {{ request.session.count_down }}
+            console.log(count_down)
+        if (count_down > 0) {
+            layer.alert('考试还未开始', {
+                skin: 'layui-layer-lan'
+                , closeBtn: 0
+                , anim: 4 //动画类型
+                , time: count_down * 1000
+                , success: function (layero, index) {
+                    var timeNum = this.time / 1000, setText = function (start) {
+                        layer.title((start ? timeNum : --timeNum) + ' 秒后开始', index);
+                    };
+                    setText(!0);
+                    this.timer = setInterval(setText, 1000);
+                    if (timeNum <= 0) clearInterval(this.timer);
+                }
+                , end: function () {
+                    clearInterval(this.timer);
+                }
+                , content: "考试还没有开始!"
+            });
+        }
+        var check1 = $("#check1").change(function () {
+            var ischeck = check1.prop("checked")
+            console.log(ischeck)
+            if (ischeck === true) {
+                $("#gw_but1").attr("disabled", false)
+            } else {
+                $("#gw_but1").attr("disabled", true)
+            }
+        });
+
+    </script>
+{% endblock %}

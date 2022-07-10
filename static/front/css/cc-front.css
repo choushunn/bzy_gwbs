@@ -1,0 +1,46 @@
+/*这里是自定义css*/
+/*common*/
+body {
+    line-height: 1.5;
+    vertical-align: middle;
+    /*background-color: #FAFAFA;*/
+    /*padding-top: 90px;*/
+}
+
+
+/*文章动画*/
+.post-border {
+    background-color: #F9F9F9;
+    border-left: 4px solid #FF5722;
+}
+
+/*footer*/
+.cc-footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 100px;
+    color: #99979c;
+    text-align: center;
+    background-color: #2a2730
+}
+
+.cc-footer a {
+    color: #fff;
+}
+
+.cc-footer a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.cc-footer-links li {
+    display: inline-block
+}
+
+.cc-footer-links li + li {
+    margin-left: 15px
+}
+
+.cc-footer > p {
+    margin-bottom: 0
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录-{% if page_info.title %}{{ page_info.title }}{% else %}机关公文写作大赛{% endif %}</title>
+    <link href="{% static 'front/login/bootstrap-grid.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'front/login/login.css' %}" rel="stylesheet" type="text/css"/>
+    <!--CSS RESET-->
+    <link href="{% static 'common/plugins/fontawesome-free/css/font-awesome.min.css' %}" rel="stylesheet">
+    <!-- <link rel="stylesheet" type="text/css" href="css/htmleaf-demo.css"> -->
+    <!--演示页面样式，使用时可以不引用-->
+</head>
+
+<body>
+<div class="htmleaf-container">
+    <div class="row">
+        <img src="/static/front/img/red_bg1.png" alt="" class="img-responsive" style="width: 100%;">
+    </div>
+    <header class="htmleaf-header">
+        <h1 class="text-center">{% if page_info.title %}{{ page_info.title }}{% else %}欢迎参加巴中市第四届机关公文写作大赛{% endif %}</h1>
+        <br>
+        <br>
+    </header>
+    <div class="demo form-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
+                    <form class="form-horizontal" method="post">
+                        {% csrf_token %}
+                        <div class="heading">登 录</div>
+                        <div class="form-group">
+                            <i class="fa fa-user"></i>
+                            <input name="candidate_num" type="text"
+                                   class="form-control" placeholder="准考证号" required value="{{ candidate_num }}">
+                        </div>
+                        <div class="form-group">
+                            <i class="fa fa-lock"></i>
+                            <input name="password" type="password"
+                                   class="form-control" placeholder="密码" required/>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
+                            <span class="alert alert-danger">{{ msg }}</span>
+                            {# <span>{{ user_login_form.errors }}</span>#}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+{% include "common/footer_login.html" %}
+</body>
+</html>

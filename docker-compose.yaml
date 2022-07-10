@@ -1,0 +1,29 @@
+version: "3"
+services:
+  web:
+    #    image: 192.168.5.13:9000/web/gwbs:offline_v2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9000:80"
+    volumes:
+      - './logs:/wwwroot/logs'
+      - './upload:/wwwroot/media/upload'
+    environment:
+      "PROJECT_ENV": "pro"
+    depends_on:
+      - db
+    privileged: true
+    restart: always
+  db:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    volumes:
+      - './data:/var/lib/postgresql/data'
+    environment:
+      "POSTGRES_PASSWORD": "aHfOQhnsPSSlOFcHeDL2"
+      "POSTGRES_USER": "gwbs"
+    privileged: true
+    restart: always
